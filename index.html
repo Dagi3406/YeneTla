@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Happy Birthday, Yene Tla 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Poppins:wght@300;400;500;600&family=Noto+Sans+Ethiopic:wght@400;600&family=Noto+Serif+Ethiopic:wght@400;600&display=swap" rel="stylesheet" />
+<!-- Split into two stylesheet requests: if one family fails to resolve,
+     it no longer takes the whole font request down with it. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600&family=Noto+Serif+Ethiopic:wght@400;600&display=swap" />
 <style>
 /* ============ 1. CONFIG / BASE ============ */
 :root{
@@ -26,15 +28,20 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  font-family:'Poppins','Noto Sans Ethiopic','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
+  font-family:'Poppins','Noto Sans Ethiopic','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Sans Symbols',sans-serif;
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
   line-height:1.7;
 }
-/* Ethiopic / Amharic text needs its own stack + roomier line-height */
+/* Ethiopic / Amharic text needs its own stack + roomier line-height.
+   System Ethiopic fonts (Nyala, Kefa, Abyssinica SIL) are listed as
+   fallbacks in case the Google webfont fails to load (e.g. blocked
+   network, offline viewing), and emoji fonts are listed last so a
+   trailing emoji in an Amharic line still renders in color instead
+   of falling through to a missing-glyph box. */
 .amharic{
-  font-family:'Noto Sans Ethiopic','Poppins',sans-serif;
+  font-family:'Noto Sans Ethiopic','Abyssinica SIL','Nyala','Kefa','Noto Serif Ethiopic','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
   font-size:1.05em;
   line-height:1.95;
   letter-spacing:.2px;
@@ -519,7 +526,7 @@ footer span{color:var(--pink)}
 <section id="finale">
   <div class="finale-card reveal">
     <h2 id="finaleName">Happy Birthday, Yene Tla</h2>
-    <p class="amharic">እንኳን ተወለድሽልኝ የኔ ሚስት የጥቅምት አበባ 💕</p>
+    <p class="amharic" lang="am">እንኳን ተወለድሽልኝ የኔ ሚስት የጥቅምት አበባ 💕</p>
     <div class="hero-actions" style="margin-top:34px">
       <button class="btn btn-solid" id="burstBtn2">One More Celebration 🎊</button>
     </div>
