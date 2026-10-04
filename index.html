@@ -537,8 +537,8 @@ footer span{color:var(--pink)}
   Made with <span>♥</span> just for Yene Tla · <span id="year"></span>
 </footer>
 
-<button id="music" title="Play music">🎵</button>
-<audio id="audio" loop></audio>
+<button id="music" title="Pause music" aria-label="Toggle music">🎵</button>
+<audio id="audio" loop preload="auto"></audio>
 
 <!-- ============ LIGHTBOX ============ -->
 <div id="lb">
@@ -595,8 +595,12 @@ I hope this year brings you everything you've ever wished for. And I promise to 
 
 I love you. More than words, more than today.`,
 
-  // 🎵 Optional music — paste a direct .mp3 URL here
-  musicUrl: ""
+  // 🎵 Background music — starts automatically when she taps "Open Your Gift".
+  //    Paste a direct .mp3 URL (or a file next to this page, e.g. "song.mp3") to use your
+  //    own song (her favourite!). Leave "" to use the built-in soft
+  //    "Happy Birthday" music-box melody.
+  musicUrl: "",
+  musicVolume: 0.6                  // 0 – 1
 };
 
 /* =========================================================
@@ -729,9 +733,141 @@ function celebrate(){
 }
 
 /* =========================================================
-   🎬  INTRO
+   🎵  BACKGROUND MUSIC
+   ---------------------------------------------------------
+   Browsers only allow sound after a tap, so music is started
+   directly inside the "Open Your Gift" click handler.
+   • If CONFIG.musicUrl is set → plays that file on loop.
+   • Otherwise → a built-in music-box "Happy Birthday" (Web
+     Audio, no files needed) that loops softly.
+   ========================================================= */
+const audio    = $('#audio');
+const musicBtn = $('#music');
+let musicOn = false;          // is music currently supposed to be playing
+let synth   = null;           // built-in melody engine (lazy)
+
+function createSynth(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+
+  const ac     = new AC();
+  const master = ac.createGain();
+  master.gain.value = 0;
+
+  // gentle echo so the music box sounds warm and spacious
+  const delay = ac.createDelay(1.0);  delay.delayTime.value = 0.32;
+  const fb    = ac.createGain();      fb.gain.value = 0.32;
+  const wet   = ac.createGain();      wet.gain.value = 0.35;
+  delay.connect(fb); fb.connect(delay);
+  delay.connect(wet); wet.connect(master);
+  master.connect(ac.destination);
+
+  const F = { G4:392.00, A4:440.00, B4:493.88, C5:523.25, D5:587.33,
+              E5:659.25, F5:698.46, G5:783.99, C3:130.81, G3:196.00, F3:174.61 };
+
+  // "Happy Birthday to You" in C major, 3/4 time. [note, beats]
+  const melody = [
+    ['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
+    ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
+    ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1],
+    ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2]
+  ];
+  // soft bass notes, one per bar (3 beats each) → 8 bars
+  const bass = ['C3','C3','G3','C3','C3','C3','F3','C3'];
+
+  const BEAT = 0.62;                       // seconds per beat (~97 bpm, gentle)
+  const LOOP_BEATS = 24 + 3;               // melody + a short rest
+  let nextLoopAt = 0;
+
+  function tone(freq, t, dur, vol, type){
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); g.connect(delay);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function bell(freq, t, beats){
+    const dur = Math.max(0.7, beats * BEAT * 1.5);
+    tone(freq,     t, dur,       0.22, 'triangle');
+    tone(freq * 2, t, dur * .55, 0.05, 'sine');       // shimmer overtone
+  }
+
+  function scheduleLoop(start){
+    let t = start;
+    melody.forEach(([n, b]) => { bell(F[n], t, b); t += b * BEAT; });
+    bass.forEach((n, i) => tone(F[n], start + i * 3 * BEAT, 3 * BEAT * 0.95, 0.12, 'sine'));
+    nextLoopAt = start + LOOP_BEATS * BEAT;
+  }
+
+  // look-ahead scheduler: keeps queueing the next loop. It reads ac.currentTime,
+  // which freezes while the context is suspended, so pause/resume stays in sync.
+  nextLoopAt = ac.currentTime + 0.2;
+  setInterval(() => {
+    if (ac.state === 'running' && ac.currentTime + 3 > nextLoopAt) scheduleLoop(nextLoopAt);
+  }, 400);
+
+  return {
+    start(){
+      ac.resume();
+      master.gain.cancelScheduledValues(ac.currentTime);
+      master.gain.setValueAtTime(master.gain.value, ac.currentTime);
+      master.gain.linearRampToValueAtTime(CONFIG.musicVolume, ac.currentTime + 2.5);   // fade in
+    },
+    stop(){
+      master.gain.cancelScheduledValues(ac.currentTime);
+      master.gain.setValueAtTime(master.gain.value, ac.currentTime);
+      master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.5);                    // fade out
+      setTimeout(() => { if (!musicOn) ac.suspend(); }, 600);
+    }
+  };
+}
+
+function setMusicUI(on){
+  musicBtn.classList.toggle('playing', on);
+  musicBtn.textContent = on ? '⏸' : '🎵';
+  musicBtn.title = on ? 'Pause music' : 'Play music';
+}
+
+function startMusic(){
+  musicOn = true;
+  setMusicUI(true);
+  if (CONFIG.musicUrl){
+    if (!audio.src) audio.src = CONFIG.musicUrl;
+    audio.volume = CONFIG.musicVolume;
+    audio.play().catch(() => { musicOn = false; setMusicUI(false); });
+  } else {
+    if (!synth) synth = createSynth();
+    if (synth) synth.start(); else { musicOn = false; setMusicUI(false); }
+  }
+}
+function stopMusic(){
+  musicOn = false;
+  setMusicUI(false);
+  if (CONFIG.musicUrl) audio.pause();
+  else if (synth) synth.stop();
+}
+
+musicBtn.addEventListener('click', e => {
+  e.stopPropagation();                      // don't trigger the click-sparkle
+  musicOn ? stopMusic() : startMusic();
+});
+
+// pause when the tab is hidden, resume when she comes back (only if it was on)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && musicOn){
+    if (CONFIG.musicUrl) audio.pause(); else if (synth) synth.stop();
+  } else if (!document.hidden && musicOn){
+    if (CONFIG.musicUrl) audio.play().catch(()=>{}); else if (synth) synth.start();
+  }
+});
+
+/* =========================================================
+   🎬  INTRO  — tapping "Open Your Gift" also starts the music
    ========================================================= */
 $('#openBtn').addEventListener('click', () => {
+  startMusic();                              // must happen inside this tap
   $('#intro').classList.add('hide');
   document.body.style.overflow = '';
   setTimeout(celebrate, 320);
@@ -897,24 +1033,6 @@ sections.forEach(s => s.id && navIO.observe(s));
    ========================================================= */
 $('#burstBtn').addEventListener('click', celebrate);
 $('#burstBtn2').addEventListener('click', celebrate);
-
-/* =========================================================
-   🎵  MUSIC (optional)
-   ========================================================= */
-const audio = $('#audio');
-const musicBtn = $('#music');
-if (CONFIG.musicUrl){
-  audio.src = CONFIG.musicUrl;
-} else {
-  musicBtn.style.display = 'none';
-}
-let playing = false;
-musicBtn.addEventListener('click', () => {
-  if (!CONFIG.musicUrl) return;
-  if (playing){ audio.pause(); musicBtn.classList.remove('playing'); musicBtn.textContent = '🎵'; }
-  else { audio.play().catch(()=>{}); musicBtn.classList.add('playing'); musicBtn.textContent = '⏸'; }
-  playing = !playing;
-});
 
 /* =========================================================
    ✨  EXTRA: click anywhere for a tiny sparkle
