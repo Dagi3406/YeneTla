@@ -6,8 +6,6 @@
 <title>Happy Birthday, Yene Tla 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- Split into two stylesheet requests: if one family fails to resolve,
-     it no longer takes the whole font request down with it. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Poppins:wght@300;400;500;600&display=swap" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600&family=Noto+Serif+Ethiopic:wght@400;600&display=swap" />
 <style>
@@ -34,12 +32,6 @@ body{
   overflow-x:hidden;
   line-height:1.7;
 }
-/* Ethiopic / Amharic text needs its own stack + roomier line-height.
-   System Ethiopic fonts (Nyala, Kefa, Abyssinica SIL) are listed as
-   fallbacks in case the Google webfont fails to load (e.g. blocked
-   network, offline viewing), and emoji fonts are listed last so a
-   trailing emoji in an Amharic line still renders in color instead
-   of falling through to a missing-glyph box. */
 .amharic{
   font-family:'Noto Sans Ethiopic','Abyssinica SIL','Nyala','Kefa','Noto Serif Ethiopic','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;
   font-size:1.05em;
@@ -58,7 +50,6 @@ body::before{
 img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
-/* scrollbar */
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-track{background:#0b0512}
 ::-webkit-scrollbar-thumb{background:linear-gradient(var(--pink),var(--purple));border-radius:9px}
@@ -91,7 +82,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   text-align:center;padding:24px;
   transition:opacity .9s ease, visibility .9s;
 }
-#intro.hide{opacity:0;visibility:hidden}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
 .intro-heart{
   font-size:82px;animation:beat 1.3s ease-in-out infinite;
   filter:drop-shadow(0 0 30px rgba(255,77,141,.85));
@@ -122,7 +113,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .open-btn::after{
   content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
-  transform:skewX(-20deg);animation:sweep 2.6s infinite;
+  transform:skewX(-20deg);animation:sweep 2.6s infinite;pointer-events:none;
 }
 @keyframes sweep{0%{left:-120%}60%,100%{left:150%}}
 
@@ -158,7 +149,6 @@ section{padding:110px 22px;position:relative;max-width:1180px;margin:0 auto}
 }
 .sub{text-align:center;color:var(--muted);max-width:620px;margin:0 auto 60px;font-size:15px;font-weight:300}
 
-/* reveal */
 .reveal{opacity:0;transform:translateY(46px);transition:opacity .95s cubic-bezier(.2,.8,.2,1),transform .95s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
 .reveal.in{opacity:1;transform:none}
 
@@ -199,7 +189,7 @@ section{padding:110px 22px;position:relative;max-width:1180px;margin:0 auto}
 .hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:38px}
 .btn{
   padding:14px 32px;border-radius:60px;font-size:14px;font-weight:600;letter-spacing:.5px;
-  transition:.35s;border:1px solid var(--stroke);
+  transition:.35s;border:1px solid var(--stroke);text-decoration:none;display:inline-block;
 }
 .btn-solid{background:linear-gradient(100deg,var(--pink),var(--purple));color:#fff;box-shadow:0 14px 40px rgba(255,77,141,.4)}
 .btn-solid:hover{transform:translateY(-3px);box-shadow:0 20px 55px rgba(255,77,141,.65)}
@@ -344,7 +334,7 @@ section{padding:110px 22px;position:relative;max-width:1180px;margin:0 auto}
 
 /* ============ 11. CAKE / WISH ============ */
 .wish-wrap{text-align:center;max-width:640px;margin:0 auto}
-.cake{position:relative;width:260px;height:190px;margin:20px auto 30px}
+.cake{position:relative;width:260px;height:190px;margin:20px auto 30px;cursor:pointer}
 .candles{position:absolute;top:0;left:0;width:100%;display:flex;justify-content:center;gap:20px}
 .candle{width:11px;height:42px;border-radius:4px;background:linear-gradient(#fff,#ffd6e8);position:relative;box-shadow:0 3px 10px rgba(0,0,0,.3)}
 .candle::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:2px;height:6px;background:#5b3a2e;border-radius:2px}
@@ -404,7 +394,6 @@ footer{
 }
 footer span{color:var(--pink)}
 
-/* music btn */
 #music{
   position:fixed;bottom:22px;right:22px;z-index:950;width:52px;height:52px;border-radius:50%;
   display:grid;place-items:center;font-size:19px;
@@ -556,11 +545,11 @@ footer span{color:var(--pink)}
    ⚙️  CONFIG — EDIT EVERYTHING HERE  ✏️
    ========================================================= */
 const CONFIG = {
-  herName: "Yene Tla",              // her name
-  yourName: "Dagi",            // your name (edit this!)
-  birthday: "2026-10-17",           // YYYY-MM-DD — her birthday
+  herName: "Yene Tla",
+  yourName: "Dagi",
+  birthday: "2026-10-17",
 
-  // 📸 PHOTOS — put image URLs in "src". Leave "" to show a pretty placeholder.
+  // 📸 PHOTOS — keep a comma after every item except the last one
   photos: [
     { src: "tla1.png", caption: "", emoji: "" },
     { src: "tla2.png", caption: "", emoji: "" },
@@ -569,9 +558,9 @@ const CONFIG = {
     { src: "tla5.png", caption: "", emoji: "" },
     { src: "tla6.png", caption: "", emoji: "" },
     { src: "tla7.png", caption: "", emoji: "" },
-    { src: "tla8.png", caption: "", emoji: "" }
-     { src: "tla9.png", caption: "", emoji: "" }
-     { src: "tla10.png", caption: "", emoji: "" }
+    { src: "tla8.png", caption: "", emoji: "" },
+    { src: "tla9.png", caption: "", emoji: "" },
+    { src: "tla10.png", caption: "", emoji: "" }
   ],
 
   // 💗 REASONS — flip cards
@@ -592,12 +581,9 @@ const CONFIG = {
 
  Ewedishalew yene alem metwejew mikael abate yitebkesh lebeshn aykeyrbgn 🥺😍.`,
 
-  // 🎵 Background music — starts automatically when she taps "Open Your Gift".
-  //    Paste a direct .mp3 URL (or a file next to this page, e.g. "song.mp3") to use your
-  //    own song (her favourite!). Leave "" to use the built-in soft
-  //    "Happy Birthday" music-box melody.
+  // 🎵 Music: file next to this page. Use no spaces in the name, e.g. "teddy-afro.mp3"
   musicUrl: "TEDDY AFRO.mp3",
-  musicVolume: 0.8                  // 0 – 1
+  musicVolume: 0.8
 };
 
 /* =========================================================
@@ -686,8 +672,8 @@ function tick(){
 
   for (let i = particles.length - 1; i >= 0; i--){
     const p = particles[i];
-    p.vy += 0.32;          // gravity
-    p.vx *= 0.992;         // drag
+    p.vy += 0.32;
+    p.vx *= 0.992;
     p.vy *= 0.992;
     p.x  += p.vx;
     p.y  += p.vy;
@@ -731,17 +717,11 @@ function celebrate(){
 
 /* =========================================================
    🎵  BACKGROUND MUSIC
-   ---------------------------------------------------------
-   Browsers only allow sound after a tap, so music is started
-   directly inside the "Open Your Gift" click handler.
-   • If CONFIG.musicUrl is set → plays that file on loop.
-   • Otherwise → a built-in music-box "Happy Birthday" (Web
-     Audio, no files needed) that loops softly.
    ========================================================= */
 const audio    = $('#audio');
 const musicBtn = $('#music');
-let musicOn = false;          // is music currently supposed to be playing
-let synth   = null;           // built-in melody engine (lazy)
+let musicOn = false;
+let synth   = null;
 
 function createSynth(){
   const AC = window.AudioContext || window.webkitAudioContext;
@@ -751,7 +731,6 @@ function createSynth(){
   const master = ac.createGain();
   master.gain.value = 0;
 
-  // gentle echo so the music box sounds warm and spacious
   const delay = ac.createDelay(1.0);  delay.delayTime.value = 0.32;
   const fb    = ac.createGain();      fb.gain.value = 0.32;
   const wet   = ac.createGain();      wet.gain.value = 0.35;
@@ -762,18 +741,16 @@ function createSynth(){
   const F = { G4:392.00, A4:440.00, B4:493.88, C5:523.25, D5:587.33,
               E5:659.25, F5:698.46, G5:783.99, C3:130.81, G3:196.00, F3:174.61 };
 
-  // "Happy Birthday to You" in C major, 3/4 time. [note, beats]
   const melody = [
     ['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
     ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
     ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1],
     ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2]
   ];
-  // soft bass notes, one per bar (3 beats each) → 8 bars
   const bass = ['C3','C3','G3','C3','C3','C3','F3','C3'];
 
-  const BEAT = 0.62;                       // seconds per beat (~97 bpm, gentle)
-  const LOOP_BEATS = 24 + 3;               // melody + a short rest
+  const BEAT = 0.62;
+  const LOOP_BEATS = 24 + 3;
   let nextLoopAt = 0;
 
   function tone(freq, t, dur, vol, type){
@@ -788,7 +765,7 @@ function createSynth(){
   function bell(freq, t, beats){
     const dur = Math.max(0.7, beats * BEAT * 1.5);
     tone(freq,     t, dur,       0.22, 'triangle');
-    tone(freq * 2, t, dur * .55, 0.05, 'sine');       // shimmer overtone
+    tone(freq * 2, t, dur * .55, 0.05, 'sine');
   }
 
   function scheduleLoop(start){
@@ -798,8 +775,6 @@ function createSynth(){
     nextLoopAt = start + LOOP_BEATS * BEAT;
   }
 
-  // look-ahead scheduler: keeps queueing the next loop. It reads ac.currentTime,
-  // which freezes while the context is suspended, so pause/resume stays in sync.
   nextLoopAt = ac.currentTime + 0.2;
   setInterval(() => {
     if (ac.state === 'running' && ac.currentTime + 3 > nextLoopAt) scheduleLoop(nextLoopAt);
@@ -810,12 +785,12 @@ function createSynth(){
       ac.resume();
       master.gain.cancelScheduledValues(ac.currentTime);
       master.gain.setValueAtTime(master.gain.value, ac.currentTime);
-      master.gain.linearRampToValueAtTime(CONFIG.musicVolume, ac.currentTime + 2.5);   // fade in
+      master.gain.linearRampToValueAtTime(CONFIG.musicVolume, ac.currentTime + 2.5);
     },
     stop(){
       master.gain.cancelScheduledValues(ac.currentTime);
       master.gain.setValueAtTime(master.gain.value, ac.currentTime);
-      master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.5);                    // fade out
+      master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.5);
       setTimeout(() => { if (!musicOn) ac.suspend(); }, 600);
     }
   };
@@ -833,7 +808,8 @@ function startMusic(){
   if (CONFIG.musicUrl){
     if (!audio.src) audio.src = CONFIG.musicUrl;
     audio.volume = CONFIG.musicVolume;
-    audio.play().catch(() => { musicOn = false; setMusicUI(false); });
+    const pr = audio.play();
+    if (pr && pr.catch) pr.catch(() => { musicOn = false; setMusicUI(false); });
   } else {
     if (!synth) synth = createSynth();
     if (synth) synth.start(); else { musicOn = false; setMusicUI(false); }
@@ -847,11 +823,10 @@ function stopMusic(){
 }
 
 musicBtn.addEventListener('click', e => {
-  e.stopPropagation();                      // don't trigger the click-sparkle
+  e.stopPropagation();
   musicOn ? stopMusic() : startMusic();
 });
 
-// pause when the tab is hidden, resume when she comes back (only if it was on)
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && musicOn){
     if (CONFIG.musicUrl) audio.pause(); else if (synth) synth.stop();
@@ -861,12 +836,12 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* =========================================================
-   🎬  INTRO  — tapping "Open Your Gift" also starts the music
+   🎬  INTRO — "Open Your Gift"
    ========================================================= */
 $('#openBtn').addEventListener('click', () => {
-  startMusic();                              // must happen inside this tap
-  $('#intro').classList.add('hide');
+  $('#intro').classList.add('hide');          // hide first so it always opens
   document.body.style.overflow = '';
+  try { startMusic(); } catch (err) { console.warn('Music failed:', err); }
   setTimeout(celebrate, 320);
 });
 document.body.style.overflow = 'hidden';
@@ -948,13 +923,13 @@ function typeLetter(){
   const el = $('#typed');
   const txt = CONFIG.letter;
   let i = 0;
-  (function step(){
+  (function stepType(){
     if (i <= txt.length){
       el.textContent = txt.slice(0, i);
       i += 1;
       const ch = txt[i - 1];
       const delay = ch === '.' ? 130 : ch === ',' ? 70 : ch === '\n' ? 220 : 17;
-      setTimeout(step, delay);
+      setTimeout(stepType, delay);
     } else {
       el.classList.add('done');
       $('#sign').classList.add('show');
@@ -999,7 +974,6 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(en => {
     if (en.isIntersecting){
       en.target.classList.add('in');
-      if (en.target.querySelector && en.target.querySelector('#typed')) typeLetter();
       io.unobserve(en.target);
     }
   });
@@ -1007,13 +981,11 @@ const io = new IntersectionObserver(entries => {
 
 $$('.reveal').forEach(el => io.observe(el));
 
-// letter section trigger
 const letterIO = new IntersectionObserver(e => {
   if (e[0].isIntersecting){ typeLetter(); letterIO.disconnect(); }
 }, { threshold: 0.3 });
 letterIO.observe($('#letter'));
 
-// nav active state
 const sections = $$('section, header#hero');
 const navLinks = $$('#nav a');
 const navIO = new IntersectionObserver(entries => {
@@ -1032,7 +1004,7 @@ $('#burstBtn').addEventListener('click', celebrate);
 $('#burstBtn2').addEventListener('click', celebrate);
 
 /* =========================================================
-   ✨  EXTRA: click anywhere for a tiny sparkle
+   ✨  click anywhere for a tiny sparkle
    ========================================================= */
 addEventListener('click', e => {
   if (e.target.closest('nav, #intro, #lb')) return;
